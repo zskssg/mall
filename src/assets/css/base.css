@@ -1,0 +1,46 @@
+
+*,
+*::after,
+*::before{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  font-family: "Microsoft YaHei",Arial,Helvetica,sans-serif,"宋体";
+  user-select: none;  /*禁止用户在页面上选中字体和文字*/
+  background-color: #fff;
+  color: #666;
+  font-size: 14px;
+  width: 100%;
+  overflow-x: hidden;
+}
+a{
+  color: #666;
+  text-decoration: none;
+}
+
+.clear-fix::after,
+.clear-fix::before{
+  content:"";
+  display:table;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.clear-fix{
+  zoom: 1;
+}
+
+.left{
+  float: left;
+}
+.right{
+  float: right;
+}
+
+ul li {
+  list-style-type: none;
+}
