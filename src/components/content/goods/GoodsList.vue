@@ -1,7 +1,7 @@
 <template>
   <div class="goods-list">
     <div class="goods-list-item" v-for="(item,index) in goods" :key="index">
-      <a href="/goods-detail">
+      <div @click="this.$router.push(this.url + item.num_iid)">
         <div>
           <img :src="item.pic_url" alt="">
         </div>
@@ -12,7 +12,7 @@
         <div class="sale-volume">
           销量{{item.mogujie_cfav}}
         </div>
-      </a>
+      </div>
     </div>
   </div>
 </template>
@@ -20,6 +20,11 @@
 <script>
 export default {
   name:'GoodsList',
+  data(){
+    return {
+      url:'/goods-detail/'
+    }
+  },
   props:{
     goods:{
       type:Array,
@@ -27,6 +32,8 @@ export default {
         return []
       }
     }
+  },
+  computed:{
   }
 }
 </script>

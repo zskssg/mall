@@ -7,6 +7,7 @@ const Cart = ()=> import('../views/cart/Cart.vue')
 const Profile = ()=> import('../views/profile/Profile.vue')
 const GoodsDetail = ()=> import('../views/goods/GoodsDetail.vue')
 const Popular = ()=> import('../views/category/ChildCategory/Popular.vue')
+const Login = ()=> import('../views/login/Login.vue')
 
 const routes = [
   
@@ -41,8 +42,12 @@ const routes = [
     component:Profile,
   },
   {
-    path:'/goods-detail',
+    path:'/goods-detail/:num_iid',
     component:GoodsDetail,
+  },
+  {
+    path: '/login',
+    component: Login
   }
 ]
 

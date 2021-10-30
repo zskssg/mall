@@ -26,7 +26,7 @@
     </tab-bar-item>
     <tab-bar-item class="goods-car">
       <template v-slot:item-text>
-        <div class="add">加入购物车</div>
+        <div class="add" @click="this.$emit('putCart')">加入购物车</div>
       </template>
     </tab-bar-item>
     <tab-bar-item class="goods-buy">
@@ -44,7 +44,7 @@ import TabBarItem from 'components/common/tabbar/TabBarItem.vue'
 
 export default {
   name:'DetailTabBar',
-  emits:['buyModuleShows'],
+  emits:['buyModuleShows','putCart'],
   components:{
     TabBar,
     TabBarItem

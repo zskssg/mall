@@ -15,11 +15,11 @@
     <!-- 商品基本信息 -->
     <div class="goods-detail-message">
       <div class="goods-detail-message-top">
-        <div>￥<span class="price">222.00</span></div>
-        <div>已售<span class="sales-volume">23</span></div>
+        <div>￥<span class="price">{{goodesDetailData.price}}</span></div>
+        <div>已售<span class="sales-volume">{{goodesDetailData.mogujie_cfav}}</span></div>
       </div>
       <div class="goods-detail-message-bottom">
-        <div class="title">梅子熟了甜美少女翻领拼接设计感小众法式针织开衫女3.28</div>
+        <div class="title">{{goodesDetailData.title}}</div>
         <div class="help">帮我选</div>
       </div>
     </div>
@@ -118,7 +118,7 @@
     </tab-control>
     <!-- 图文详情 -->
     <ul class="goods-detail-images" >
-      <li><img src="~assets/img/FeatrueImg/微胖遮肉.jpg" alt=""></li>
+      <li><img :src="goodesDetailData.pic_url" alt=""></li>
       <li><img src="~assets/img/FeatrueImg/霸街长袖群.jpg" alt=""></li>
       <li><img src="~assets/img/FeatrueImg/微胖遮肉.jpg" alt=""></li>
       <li><img src="~assets/img/FeatrueImg/霸街长袖群.jpg" alt=""></li>
@@ -126,8 +126,6 @@
       <li><img src="~assets/img/FeatrueImg/霸街长袖群.jpg" alt=""></li>
       <li><img src="~assets/img/goodsDetail/尺码图.webp" alt=""></li>
       <li><img src="~assets/img/goodsDetail/价格说明.webp" alt=""></li>
-
-
     </ul>
     <!-- 商品参数 -->
     <div class="goods-detail-parameter">
@@ -171,14 +169,24 @@
       </div>
     </div>
     <!-- tab-bar -->
-    <detail-tab-bar @buyModuleShows = "buyModuleShow"></detail-tab-bar>
+    <detail-tab-bar @putCart = "putCart" @buyModuleShows = "buyModuleShow"></detail-tab-bar>
     <!-- 购物车模态框 -->
     <div v-show="flagState">
-      <goods-module-box ref="goodsModuleBox"   @buyModuleShow = "buyModuleShow"></goods-module-box>
+      <goods-module-box ref="goodsModuleBox" @addCart= "addCart"  @buyModuleShow = "buyModuleShow"></goods-module-box>
     </div>
     <!-- 商品服务模态框 -->
     <div v-show="serviceFlagState">
       <goods-service-module-box @serviceModuleShow = "serviceModuleShow"></goods-service-module-box>
+    </div>
+    <!-- 跳转登录页面模态框 -->
+    <div class="login-router-module" v-if="loginFlag">
+      <div class="login-router-module-main">
+        <div class="login-router-module-main-message">你还未登录，请先去登录</div>
+        <div class="login-router-module-main-btn">
+          <button @click="backLoginRouter">返回</button>
+          <button @click="inLoginRouter">去登录</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -214,11 +222,14 @@ export default {
       goods:[],
       flag:true,
       serviceFlag:true,
-      goodsModuleBoxData:{
+      loginFlag:false,
+      goodesDetailData:{},    //页面展示具体商品数据
+      goodsModuleBoxData:{    //选择尺码颜色数量数据
         color:'',
         size:'',
         number:0,
       },
+      goodCartData:{},  //要加入vuex的购物车数据
     }
   },
   computed:{
@@ -247,10 +258,14 @@ export default {
   },
   mounted(){
     getHomeGoods().then(res =>{
-        this.goods = res
-        console.log(res);
-      })
-      //返回子组件模态框选择数据
+      this.goods = res
+      //根据路由参数获得相应数据
+      this.goodesDetailData = this.goods.filter((item)=>{
+        return item.num_iid === this.$route.params.num_iid
+      })[0]
+    })
+
+    //返回子组件模态框选择数据
     this.goodsModuleBoxData = this.$refs.goodsModuleBox.goodsCancels
   },
   methods:{
@@ -265,14 +280,89 @@ export default {
     },
     serviceModuleShow(){
       this.serviceFlag = !this.serviceFlag
+    },
+    putCart(){
+      if(this.goodsModuleBoxData.color && this.goodsModuleBoxData.size && this.goodsModuleBoxData.number >=1){
+        this.addCart()
+      }else{
+        this.buyModuleShow()
+      }
+    },
+    addCart() {   //添加购物车
+      if(window.sessionStorage.getItem('userinfo') !== null){
+        
+        this.goodCartData = {
+          num_iid: this.goodesDetailData.num_iid,
+          price: this.goodesDetailData.price,
+          pic_url: this.goodesDetailData.pic_url,
+          title: this.goodesDetailData.title,
+          color: this.goodsModuleBoxData.color,
+          size: this.goodsModuleBoxData.size,
+          number: this.goodsModuleBoxData.number
+        }
+        //将商品信息添加到store中的购物车列表中
+        this.$store.commit('addData',this.goodCartData)
+        console.log(this.$store.state.cartData);
+        this.flag =true
+      }else{
+        //没有登录，弹出跳转登录页面框
+        this.loginFlag = true
+      } 
+    },
+    backLoginRouter(){
+      this.loginFlag = false
+    },
+    inLoginRouter() {
+      this.$router.push('/login')
     }
   }
 }
 </script>
 
 <style>
+  .login-router-module {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(43, 41, 41, 0.5);
+    z-index: 10;
+  }
+  .login-router-module-main {
+    width: 60vw;
+    height: 20vh;
+    margin: 0 auto;
+    margin-top: 30vh;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  .login-router-module-main-message{
+    width: 100%;
+    text-align: center;
+    padding: 10% 0;
+  }
+  .login-router-module-main-btn {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  .login-router-module-main-btn>button {
+    width: 80px;
+    text-align: center;
+    line-height: 30px;
+    border: 0;
+    border-radius: 10px;
+    color: #fff;
+    background-color: rgb(190, 13, 190);
+  }
+  .login-router-module-main-btn>button:active {
+    color: salmon;
+    background-color: purple;
 
-
+  }
   .goods-detail{
     width: 100%;
     overflow: hidden;
@@ -565,5 +655,5 @@ export default {
   .goods-detail-recommend .recommend-goods {
     width: 100%;
   }
-
+  /* 跳转登录模态框css */
 </style>

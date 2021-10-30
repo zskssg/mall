@@ -58,10 +58,8 @@
       </div>
     </template>
     <template v-slot:footer>
-      <div class="footer-operate">
-        <a href="">
+      <div class="footer-operate" @click="add">      
           确认
-        </a>
       </div>
     </template>
 
@@ -73,7 +71,7 @@ import ModuleBox from 'components/content/moduleBox/ModuleBox.vue'
 
 export default {
   name:'GoodsModuleBox',
-  emits:['buyModuleShow'],
+  emits:['buyModuleShow','addCart'],
   components:{
     ModuleBox,
   },
@@ -106,7 +104,7 @@ export default {
     let that = this;
     let colorItems = document.querySelectorAll('.color .items button')
     let sizeItems = document.querySelectorAll('.size .items button')
-    console.log(this.goodsCancels);
+    console.log(this.goodsCancels); 
     //activeStyle
     function activeStyle(elParent,el){
       
@@ -153,6 +151,12 @@ export default {
     cancelBack(){
       this.flag = !this.flag
       this.$emit('buyModuleShow')
+    },
+    add(){
+      if(this.goodsCancels.color !== '' && this.goodsCancels.size !== '' && this.goodsCancels.number >=1){
+        this.$emit('addCart')
+      }
+
     }
   }
 }
@@ -288,10 +292,9 @@ export default {
   justify-content: center;
   align-items: center;
   text-align: center;
+   font-size: 14px;
+  color: #fff;
   background-color: #d4237a;
 }
-.footer-operate a {
-  font-size: 14px;
-  color: #fff;
-}
+
 </style>

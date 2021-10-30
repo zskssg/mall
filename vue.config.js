@@ -12,9 +12,11 @@ const path = require('path')
      },
    },
    devServer: {
+    host:'localhost',
+    port:8080,
     proxy: {
       '/api': {
-        target: 'https://api.mogu.com',   //代理接口
+        target: 'http://lcoalhost:3000',   //代理接口
         changeOrigin: true,
         source:false,
         pathRewrite: {

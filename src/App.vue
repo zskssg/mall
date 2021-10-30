@@ -25,8 +25,7 @@ export default {
   },
   computed:{
     flagMessage(){
-      console.log(this.$route.path);
-      return this.$route.path !== '/goods-detail' ? true:false
+      return ((this.$route.path.indexOf('goods-detail') === -1) && this.$route.path !== '/login')  ? true:false
     }
   }
 }
